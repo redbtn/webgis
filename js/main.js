@@ -51,12 +51,58 @@ function style(feature) {
     };
 }
 
-/** 2. Define stye function to kecamatan variable */
-var kecamatan = L.geoJSON(kecamatandata, {
-    style
+/** 2. Define style and mouse function to kecamatan variable */
+const kecamatan = L.geoJSON(kecamatandata, {
+    style,
+    onEachFeature
 }
     ).addTo(map);
 
+/** 3. Define mouse interaction */
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 5,
+        color: '#666',
+        dashArray: '',
+        fillOpacity: 0.7
+    });
+
+    layer.bringToFront();
+    info.update(layer.feature.properties); //mouse hover info
+}
+
+function resetHighlight(e) {
+    kecamatan.resetStyle(e.target);
+    info.update(); //mouse hover info
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        //click: zoomToFeature
+    });
+}
+
+/** 4. Mouse hover info */
+var info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+    this._div.innerHTML = '<h4>Kecamatan</h4>' +  (props ?
+        '<b>' + props.NAMOBJ + '</b><br />' + props.LUASWH + ' people / mi<sup>2</sup>'
+        : 'Hover over color');
+};
+
+info.addTo(map);
 
 //ADD GEOJSON DATA
 //var kecamatan = L.geoJSON(kecamatandata).addTo(map);
