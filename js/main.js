@@ -1,4 +1,4 @@
-var map = L.map('map').setView([-8.554272968270357, 115.2716845613025], 7);
+var map = L.map('map').setView([-8.554272968270357, 115.2716845613025], 13);
 
 // OSM Layer
 var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -21,11 +21,20 @@ var googleTerrain = L.tileLayer('http://{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={
 });
 googleTerrain.addTo(map);
 
-// Layer Control
+//ADD GEOJSON DATA
+var kecamatan = L.geoJSON(kecamatandata).addTo(map);
+var sungai = L.geoJSON(sungaidata).addTo(map);
+
+// LAYER CONTROL
 var baseMaps = {
     "OSM": osm,
     "Satellite": googleSat,
     "Terrain": googleTerrain
 };
 
-var layerControl = L.control.layers(baseMaps).addTo(map);
+var overlayMaps = {
+    "Kecamatan": kecamatan,
+    "Sungai": sungai
+};
+
+var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
